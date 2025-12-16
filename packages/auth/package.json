@@ -1,0 +1,35 @@
+{
+  "name": "@bkper/web-auth",
+  "version": "1.0.0",
+  "description": "Framework-agnostic OAuth authentication SDK for Bkper API",
+  "author": "Bkper",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bkper/bkper-web.git",
+    "directory": "packages/auth"
+  },
+  "keywords": [
+    "bkper",
+    "auth",
+    "oauth",
+    "authentication",
+    "sdk"
+  ],
+  "dependencies": {
+    "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "typescript": "^5.7.2"
+  }
+}
