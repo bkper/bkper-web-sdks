@@ -11,6 +11,8 @@
     "LICENSE"
   ],
   "scripts": {
+    "clean": "rm -rf ./node_modules & rm -rf ./dist & wait",
+    "prebuild": "bun install",
     "build": "tsc"
   },
   "repository": {
