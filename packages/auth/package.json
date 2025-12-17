@@ -14,7 +14,11 @@
   "scripts": {
     "clean": "rm -rf ./node_modules & rm -rf ./dist & wait",
     "prebuild": "bun install",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "prepublishOnly": "bun run build && bun run test"
   },
   "repository": {
     "type": "git",
@@ -32,7 +36,9 @@
     "js-cookie": "^3.0.5"
   },
   "devDependencies": {
-    "@types/js-cookie": "^3.0.6",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
+    "@types/js-cookie": "^3.0.6"
   }
 }
