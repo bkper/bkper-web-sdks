@@ -8,7 +8,8 @@
   "style": "src/bkper.css",
   "files": [
     "src",
-    "LICENSE"
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "lint": "stylelint 'src/**/*.css'",
