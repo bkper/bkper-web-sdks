@@ -2,7 +2,10 @@
   "name": "@bkper/web-design",
   "version": "2.0.0",
   "description": "Bkper design system - CSS variables, tokens, and themes",
-  "author": "Bkper",
+  "author": {
+    "name": "Bkper Inc.",
+    "url": "https://bkper.com"
+  },
   "license": "Apache-2.0",
   "main": "src/bkper.css",
   "style": "src/bkper.css",
@@ -21,10 +24,15 @@
     "major": "npm version major",
     "postversion": "git push --follow-tags && npm publish --access public && echo \"✅ Successfully released version $npm_package_version!\""
   },
+  "homepage": "https://bkper.com/docs/",
   "repository": {
     "type": "git",
     "url": "https://github.com/bkper/bkper-web.git",
     "directory": "packages/design"
+  },
+  "bugs": {
+    "url": "https://github.com/bkper/bkper-web/issues",
+    "email": "support@bkper.com"
   },
   "keywords": [
     "bkper",
