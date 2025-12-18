@@ -2,9 +2,14 @@
   "name": "@bkper/web-auth",
   "version": "1.0.0",
   "description": "Framework-agnostic OAuth authentication SDK for Bkper API",
-  "author": "Bkper",
+  "author": {
+    "name": "Bkper Inc.",
+    "url": "https://bkper.com"
+  },
   "license": "Apache-2.0",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
@@ -25,10 +30,15 @@
     "major": "npm version major",
     "postversion": "git push --follow-tags && npm publish --access public && echo \"✅ Successfully released version $npm_package_version!\""
   },
+  "homepage": "https://bkper.com/docs/",
   "repository": {
     "type": "git",
     "url": "https://github.com/bkper/bkper-web.git",
     "directory": "packages/auth"
+  },
+  "bugs": {
+    "url": "https://github.com/bkper/bkper-web/issues",
+    "email": "support@bkper.com"
   },
   "keywords": [
     "bkper",
