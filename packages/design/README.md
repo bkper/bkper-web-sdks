@@ -2,6 +2,8 @@
 
 Bkper's design system - CSS variables, tokens, and themes.
 
+[![npm](https://img.shields.io/npm/v/@bkper/web-design?color=%235889e4)](https://www.npmjs.com/package/@bkper/web-design)
+
 ## Documentation
 
 * [Developer Docs](https://bkper.com/docs/)
