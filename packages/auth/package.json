@@ -27,6 +27,7 @@
     "clean": "rm -rf ./node_modules & rm -rf ./dist & wait",
     "prebuild": "bun install",
     "build": "tsc",
+    "dev": "tsc -w",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
