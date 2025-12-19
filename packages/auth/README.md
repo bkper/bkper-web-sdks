@@ -71,7 +71,7 @@ const auth = new BkperAuth(config);
 
 ## Browser Compatibility
 
-This package requires modern web browsers with native [`fetch` API support](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#browser_compatibility). It uses standard web APIs and works in any JavaScript environment that supports modern browser features.
+This package requires modern web browsers with native [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#browser_compatibility) support. It uses standard web APIs and works in any JavaScript environment that supports modern browser features.
 
 ## API Reference
 
