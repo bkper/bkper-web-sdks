@@ -1,6 +1,6 @@
 {
   "name": "@bkper/web-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Framework-agnostic OAuth authentication SDK for Bkper API",
   "author": {
     "name": "Bkper Inc.",
