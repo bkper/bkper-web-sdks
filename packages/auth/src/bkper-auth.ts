@@ -2,6 +2,24 @@ import { BkperAuthConfig } from './types';
 
 const DEFAULT_BASE_URL = 'https://bkper.app';
 
+/**
+ * OAuth authentication client for the Bkper API.
+ *
+ * Provides framework-agnostic authentication with callback-based event handling.
+ * Access tokens are stored in-memory; sessions persist via HTTP-only cookies.
+ *
+ * @example
+ * ```typescript
+ * // Initialize authentication client
+ * const auth = new BkperAuth({
+ *   onLoginSuccess: () => loadUserData(),
+ *   onLoginRequired: () => showLoginButton()
+ * });
+ *
+ * // Restore session on app load
+ * await auth.init();
+ * ```
+ */
 export class BkperAuth {
 
     private config: BkperAuthConfig;
@@ -63,15 +81,6 @@ export class BkperAuth {
      * Call this method when your app loads to restore the user's session.
      * Triggers `onLoginSuccess` if a valid session exists, or `onLoginRequired` if login is needed.
      *
-     * @example
-     * ```typescript
-     * const auth = new BkperAuth({
-     *   onLoginSuccess: () => loadUserData(),
-     *   onLoginRequired: () => showLoginButton()
-     * });
-     *
-     * await auth.init();
-     * ```
      */
     async init(): Promise<void> {
         try {
@@ -118,18 +127,23 @@ export class BkperAuth {
     /**
      * Refreshes the access token using the current session.
      *
-     * Attempts to get a new access token without requiring user interaction.
+     * Call this when API requests return 403 to get a new token and retry.
      * Triggers `onTokenRefresh` callback if successful.
      * Throws error if the refresh fails (network error, expired session, etc.).
      *
      * @example
      * ```typescript
-     * try {
+     * // Handle 403 by refreshing and retrying
+     * const response = await fetch('/api/data', {
+     *   headers: { 'Authorization': `Bearer ${auth.getAccessToken()}` }
+     * });
+     *
+     * if (response.status === 403) {
      *   await auth.refresh();
-     *   console.log('Token refreshed');
-     * } catch (error) {
-     *   console.error('Refresh failed, user needs to log in again');
-     *   auth.login();
+     *   // Retry with new token
+     *   return fetch('/api/data', {
+     *     headers: { 'Authorization': `Bearer ${auth.getAccessToken()}` }
+     *   });
      * }
      * ```
      */
