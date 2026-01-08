@@ -1,0 +1,45 @@
+name: design-worker-delivery
+
+on:
+  push:
+    tags:
+      - 'design-v*'
+
+jobs:
+
+  build-and-deploy:
+
+    name: build-and-deploy
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: install
+        run: bun install --cwd packages/design
+
+      - name: build
+        run: bun --cwd packages/design build
+
+      - name: deploy-prod
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.38.0'
+          workingDirectory: 'packages/design'
+
+      - name: Notify
+        uses: pioug/le-slack-message@v1.0.0
+        if: always()
+        with:
+          ACTION_NAME: build-and-deploy
+          JOB: ${{ toJson(job) }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
