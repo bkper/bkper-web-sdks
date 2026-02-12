@@ -4,6 +4,9 @@ This is the first publication of the Bkper design system as an npm package. The 
 
 **Version History**: Version 2.x introduced a token-based design system with Web Awesome integration and Bkper-specific account type colors. Version 1.x was a simple CSS file without a token system.
 
+## 2.0.1
+- Add font family tokens: `--bkper-font-family`, `--bkper-font-family-code`
+
 ## 2.0.0
 
 - Initial npm publication of Bkper's design system
