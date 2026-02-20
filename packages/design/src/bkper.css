@@ -3,47 +3,51 @@
 .wa-light,
 .wa-dark {
 
-  /* Typography */
-  --bkper-font-family: var(--wa-font-family-body, ui-sans-serif, system-ui, sans-serif);
-  --bkper-font-family-code: var(--wa-font-family-code, ui-monospace, monospace);
+    /* Typography */
+    --bkper-font-family: var(--wa-font-family-body, ui-sans-serif, system-ui, sans-serif);
+    --bkper-font-family-code: var(--wa-font-family-code, ui-monospace, monospace);
 
-  --bkper-font-size-x-small: var(--wa-font-size-xs, 0.75rem);
-  --bkper-font-size-small: 0.85rem;
-  --bkper-font-size-medium: var(--wa-font-size-m, 1rem);
-  --bkper-font-size-large: var(--wa-font-size-l, 1.25rem);
+    --bkper-font-size-x-small: var(--wa-font-size-xs, 0.75rem);
+    --bkper-font-size-small: 0.85rem;
+    --bkper-font-size-medium: var(--wa-font-size-m, 1rem);
+    --bkper-font-size-large: var(--wa-font-size-l, 1.25rem);
 
-  --bkper-font-color-default: var(--wa-color-text-normal, #1f2937);
-  --bkper-font-weight-bold: var(--wa-font-weight-bold, 600);
+    --bkper-font-color-default: var(--wa-color-text-normal, #1f2937);
 
-  --bkper-line-height-normal: 1.8;
+    --bkper-font-weight-bold: var(--wa-font-weight-bold, 600);
 
-  /* Border */
-  --bkper-border: 1px solid var(--bkper-border-color);
-  --bkper-border-color: var(--wa-color-surface-border, #e5e7eb);
-  --bkper-border-radius: var(--wa-border-radius-m, 0.375rem);
+    --bkper-line-height-normal: 1.8;
 
-  /* Color */
-  --bkper-background-color: var(--wa-color-surface-default, #fff);
+    /* Border */
+    --bkper-border: 1px solid var(--bkper-border-color);
+    --bkper-border-color: var(--wa-color-surface-border, #e5e7eb);
+    --bkper-border-radius: var(--wa-border-radius-m, 0.375rem);
 
-  --bkper-link-color: var(--wa-color-text-link, #3b82f6);
+    /* Color */
+    --bkper-background-color: var(--wa-color-surface-default, #fff);
 
-  --bkper-color-black: var(--wa-color-neutral-95, #0f172a);
-  --bkper-color-white: var(--wa-color-neutral-05, #f8fafc);
+    --bkper-link-color: var(--wa-color-text-link, #3b82f6);
 
-  --bkper-color-primary: var(--wa-color-brand-60, #3b82f6);
-  --bkper-color-success: var(--wa-color-success-60, #22c55e);
-  --bkper-color-danger: var(--wa-color-danger-60, #ef4444);
-  --bkper-color-warning: var(--wa-color-warning-60, #f59e0b);
-  --bkper-color-neutral: var(--wa-color-neutral-60, #6b7280);
+    --bkper-color-black: var(--wa-color-neutral-95, #0f172a);
+    --bkper-color-white: var(--wa-color-neutral-05, #f8fafc);
 
-  /* Spacing */
-  --bkper-spacing-x-large: var(--wa-space-xl, 2rem);
-  --bkper-spacing-large: var(--wa-space-l, 1.5rem);
-  --bkper-spacing-medium: var(--wa-space-m, 1rem);
-  --bkper-spacing-small: var(--wa-space-s, 0.75rem);
-  --bkper-spacing-x-small: var(--wa-space-xs, 0.5rem);
-  --bkper-spacing-2x-small: var(--wa-space-2xs, 0.25rem);
-  --bkper-spacing-3x-small: var(--wa-space-3xs, 0.125rem);
+    --bkper-color-primary: var(--wa-color-brand-60, #3b82f6);
+    --bkper-color-success: var(--wa-color-success-60, #22c55e);
+    --bkper-color-danger: var(--wa-color-danger-60, #ef4444);
+    --bkper-color-warning: var(--wa-color-warning-60, #f59e0b);
+    --bkper-color-neutral: var(--wa-color-neutral-60, #6b7280);
+
+    /* Spacing */
+    --bkper-spacing-3x-small: var(--wa-space-3xs, 0.125rem);
+    --bkper-spacing-2x-small: var(--wa-space-2xs, 0.25rem);
+    --bkper-spacing-x-small: var(--wa-space-xs, 0.5rem);
+    --bkper-spacing-small: var(--wa-space-s, 0.75rem);
+    --bkper-spacing-medium: var(--wa-space-m, 1rem);
+    --bkper-spacing-large: var(--wa-space-l, 1.5rem);
+    --bkper-spacing-x-large: var(--wa-space-xl, 2rem);
+    --bkper-spacing-2x-large: var(--wa-space-2xl, 2.5rem);
+    --bkper-spacing-3x-large: var(--wa-space-3xl, 3rem);
+    --bkper-spacing-4x-large: var(--wa-space-4xl, 4rem);
 
 }
 
@@ -51,48 +55,48 @@
 :host,
 .wa-light {
 
-  --bkper-color-grey-low: #f5f5f5;
-  --bkper-color-grey-medium: #ccc;
-  --bkper-color-grey-high: #3A3A3A;
+    --bkper-color-grey-low: #f5f5f5;
+    --bkper-color-grey-medium: #ccc;
+    --bkper-color-grey-high: #3A3A3A;
 
-  --bkper-color-blue-low: #dfedf6;
-  --bkper-color-blue-medium: #afd4e9;
-  --bkper-color-blue-high: #3478bc;
+    --bkper-color-blue-low: #dfedf6;
+    --bkper-color-blue-medium: #afd4e9;
+    --bkper-color-blue-high: #3478bc;
 
-  --bkper-color-yellow-low: #fef3d8;
-  --bkper-color-yellow-medium: #fce39c;
-  --bkper-color-yellow-high: #cc9200;
+    --bkper-color-yellow-low: #fef3d8;
+    --bkper-color-yellow-medium: #fce39c;
+    --bkper-color-yellow-high: #cc9200;
 
-  --bkper-color-green-low: #e2f3e7;
-  --bkper-color-green-medium: #b8e0c3;
-  --bkper-color-green-high: #228c33;
+    --bkper-color-green-low: #e2f3e7;
+    --bkper-color-green-medium: #b8e0c3;
+    --bkper-color-green-high: #228c33;
 
-  --bkper-color-red-low: #f6deda;
-  --bkper-color-red-medium: #eebbb4;
-  --bkper-color-red-high: #bf4436;
+    --bkper-color-red-low: #f6deda;
+    --bkper-color-red-medium: #eebbb4;
+    --bkper-color-red-high: #bf4436;
 }
 
 :host,
 .wa-dark {
 
-  --bkper-color-grey-low: #3A3A3A;
-  --bkper-color-grey-medium: #6d6d6d;
-  --bkper-color-grey-high: #bfb8b8;
+    --bkper-color-grey-low: #3A3A3A;
+    --bkper-color-grey-medium: #6d6d6d;
+    --bkper-color-grey-high: #bfb8b8;
 
-  --bkper-color-blue-low: #1d4268;
-  --bkper-color-blue-medium: #3478bc;
-  --bkper-color-blue-high: #50a4d9;
+    --bkper-color-blue-low: #1d4268;
+    --bkper-color-blue-medium: #3478bc;
+    --bkper-color-blue-high: #50a4d9;
 
-  --bkper-color-yellow-low: #664900;
-  --bkper-color-yellow-medium: #cc9200;
-  --bkper-color-yellow-high: #e3bb56;
+    --bkper-color-yellow-low: #664900;
+    --bkper-color-yellow-medium: #cc9200;
+    --bkper-color-yellow-high: #e3bb56;
 
-  --bkper-color-green-low: #0d3514;
-  --bkper-color-green-medium: #228c33;
-  --bkper-color-green-high: #36cf64;
+    --bkper-color-green-low: #0d3514;
+    --bkper-color-green-medium: #228c33;
+    --bkper-color-green-high: #36cf64;
 
-  --bkper-color-red-low: #631b13;
-  --bkper-color-red-medium: #bf4436;
-  --bkper-color-red-high: #eb7763;
+    --bkper-color-red-low: #631b13;
+    --bkper-color-red-medium: #bf4436;
+    --bkper-color-red-high: #eb7763;
 
 }
