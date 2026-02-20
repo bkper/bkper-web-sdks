@@ -4,7 +4,7 @@
 .wa-dark {
 
   /* Typography */
-  --bkper-font-family: arial, sans-serif;
+  --bkper-font-family: var(--wa-font-family-body, ui-sans-serif, system-ui, sans-serif);
   --bkper-font-family-code: var(--wa-font-family-code, ui-monospace, monospace);
 
   --bkper-font-size-x-small: var(--wa-font-size-xs, 0.75rem);
