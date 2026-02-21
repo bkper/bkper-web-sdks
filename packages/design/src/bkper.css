@@ -17,7 +17,7 @@
     --bkper-line-height-normal: 1.8;
 
     /* Border */
-    --bkper-border: 1px solid var(--bkper-border-color);
+    --bkper-border: 1px solid var(--bkper-color-border);
     --bkper-border-radius: var(--wa-border-radius-m, 0.375rem);
 
     /* Spacing */
@@ -47,10 +47,10 @@
 .wa-light {
 
     /* Color */
-    --bkper-font-color-default: var(--wa-color-text-normal, var(--bkper-color-black));
-    --bkper-border-color: var(--wa-color-surface-border, #e4e5e9);
-    --bkper-background-color: var(--wa-color-surface-default, white);
-    --bkper-link-color: var(--wa-color-text-link, #0053c0);
+    --bkper-color-text: var(--wa-color-text-normal, var(--bkper-color-black));
+    --bkper-color-link: var(--wa-color-text-link, #0053c0);
+    --bkper-color-background: var(--wa-color-surface-default, white);
+    --bkper-color-border: var(--wa-color-surface-border, #e4e5e9);
 
     --bkper-color-neutral: var(--wa-color-neutral-20, #2f323f);
 
@@ -73,16 +73,23 @@
     --bkper-color-red-low: #f6deda;
     --bkper-color-red-medium: #eebbb4;
     --bkper-color-red-high: #bf4436;
+
+    /* DEPRECATED */
+    --bkper-font-color-default: var(--bkper-color-text);
+    --bkper-border-color: var(--bkper-color-border);
+    --bkper-background-color: var(--bkper-color-background);
+    --bkper-link-color: var(--bkper-color-link);
+
 }
 
 :host,
 .wa-dark {
 
     /* Color */
-    --bkper-font-color-default: var(--wa-color-text-normal, var(--bkper-color-white));
-    --bkper-border-color: var(--wa-color-surface-border, #2f323f);
-    --bkper-background-color: var(--wa-color-surface-default, #101219);
-    --bkper-link-color: var(--wa-color-text-link, #6eb3ff);
+    --bkper-color-text: var(--wa-color-text-normal, var(--bkper-color-white));
+    --bkper-color-link: var(--wa-color-text-link, #6eb3ff);
+    --bkper-color-background: var(--wa-color-surface-default, #101219);
+    --bkper-color-border: var(--wa-color-surface-border, #2f323f);
 
     --bkper-color-neutral: var(--wa-color-neutral-90, #e4e5e9);
 
@@ -105,5 +112,11 @@
     --bkper-color-red-low: #631b13;
     --bkper-color-red-medium: #bf4436;
     --bkper-color-red-high: #eb7763;
+
+    /* DEPRECATED */
+    --bkper-font-color-default: var(--bkper-color-text);
+    --bkper-link-color: var(--bkper-color-link);
+    --bkper-background-color: var(--bkper-color-background);
+    --bkper-border-color: var(--bkper-color-border);
 
 }
