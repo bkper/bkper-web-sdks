@@ -39,6 +39,7 @@
     --bkper-color-success: var(--wa-color-success-50, #00883c);
     --bkper-color-danger: var(--wa-color-danger-50, #dc3146);
     --bkper-color-warning: var(--wa-color-warning-50, #b45f04);
+    --bkper-color-focus: var(--wa-color-focus, #3e96ff);
 
 }
 
