@@ -6,13 +6,25 @@ Framework-agnostic OAuth authentication SDK for Bkper API.
 
 ## Documentation
 
-* [Developer Docs](https://bkper.com/docs/)
-* [API Reference](https://bkper.com/docs/auth-sdk)
+- [Developer Docs](https://bkper.com/docs/)
+- [API Reference](https://bkper.com/docs/auth-sdk)
 
 ## Installation
 
-```bash
-npm install @bkper/web-auth
+```bash tab="bun"
+bun add @bkper/web-auth
+```
+
+```bash tab="npm"
+npm i -S @bkper/web-auth
+```
+
+```bash tab="pnpm"
+pnpm add @bkper/web-auth
+```
+
+```bash tab="yarn"
+yarn add @bkper/web-auth
 ```
 
 ## Quick Start
@@ -22,14 +34,14 @@ import { BkperAuth } from '@bkper/web-auth';
 
 // Initialize client with callbacks
 const auth = new BkperAuth({
-  onLoginSuccess: () => {
-    console.log('User authenticated!');
-    loadUserData();
-  },
-  onLoginRequired: () => {
-    console.log('Please sign in');
-    showLoginButton();
-  }
+    onLoginSuccess: () => {
+        console.log('User authenticated!');
+        loadUserData();
+    },
+    onLoginRequired: () => {
+        console.log('Please sign in');
+        showLoginButton();
+    },
 });
 
 // Initialize authentication flow on app load
@@ -38,9 +50,9 @@ await auth.init();
 // Get access token for API calls
 const token = auth.getAccessToken();
 if (token) {
-  fetch('/api/data', {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
+    fetch('/api/data', {
+        headers: { Authorization: `Bearer ${token}` },
+    });
 }
 ```
 
@@ -50,33 +62,32 @@ Access tokens expire and need to be refreshed. The recommended pattern is to han
 
 ```typescript
 async function apiRequest(url: string, options: RequestInit = {}) {
-
-  // Add auth header
-  const token = auth.getAccessToken();
-  options.headers = {
-    ...options.headers,
-    'Authorization': `Bearer ${token}`
-  };
-
-  const response = await fetch(url, options);
-
-  // Handle expired token
-  if (response.status === 403) {
-    try {
-      await auth.refresh();
-      options.headers = {
+    // Add auth header
+    const token = auth.getAccessToken();
+    options.headers = {
         ...options.headers,
-        'Authorization': `Bearer ${auth.getAccessToken()}`
-      };
-      return fetch(url, options); // Retry once
-    } catch (error) {
-      // Refresh failed - the onError callback will be triggered
-      // Handle the error appropriately (e.g., redirect to login, show error message)
-      throw error;
-    }
-  }
+        Authorization: `Bearer ${token}`,
+    };
 
-  return response;
+    const response = await fetch(url, options);
+
+    // Handle expired token
+    if (response.status === 403) {
+        try {
+            await auth.refresh();
+            options.headers = {
+                ...options.headers,
+                Authorization: `Bearer ${auth.getAccessToken()}`,
+            };
+            return fetch(url, options); // Retry once
+        } catch (error) {
+            // Refresh failed - the onError callback will be triggered
+            // Handle the error appropriately (e.g., redirect to login, show error message)
+            throw error;
+        }
+    }
+
+    return response;
 }
 ```
 
@@ -91,11 +102,13 @@ async function apiRequest(url: string, options: RequestInit = {}) {
 ## How It Works
 
 **Session Persistence:**
+
 - Access tokens are stored in-memory (cleared on page refresh)
 - Sessions persist via HTTP-only cookies (managed by Bkper's authentication service)
 - Call `init()` on app load to restore the session from cookies
 
 **Security:**
+
 - HTTP-only cookies protect refresh tokens from XSS
 - In-memory access tokens minimize exposure
 
@@ -107,8 +120,8 @@ This package is written in TypeScript and provides full type definitions out of 
 import { BkperAuth, BkperAuthConfig } from '@bkper/web-auth';
 
 const config: BkperAuthConfig = {
-  onLoginSuccess: () => console.log('Authenticated'),
-  onError: (error) => console.error('Auth error:', error)
+    onLoginSuccess: () => console.log('Authenticated'),
+    onError: error => console.error('Auth error:', error),
 };
 
 const auth = new BkperAuth(config);
@@ -117,6 +130,7 @@ const auth = new BkperAuth(config);
 ## Browser Compatibility
 
 This package requires modern web browsers with support for:
+
 - [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#browser_compatibility) for HTTP requests
 - [Location API](https://developer.mozilla.org/en-US/docs/Web/API/Location) for login/logout redirects
 
