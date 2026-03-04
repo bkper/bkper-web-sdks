@@ -1,64 +1,65 @@
 {
-  "name": "@bkper/web-design",
-  "version": "2.1.0",
-  "description": "Bkper design system - CSS variables, tokens, and themes",
-  "author": {
-    "name": "Bkper Inc.",
-    "url": "https://bkper.com"
-  },
-  "license": "Apache-2.0",
-  "main": "src/bkper.css",
-  "style": "src/bkper.css",
-  "exports": {
-    ".": "./src/bkper.css"
-  },
-  "files": [
-    "src",
-    "LICENSE",
-    "README.md"
-  ],
-  "scripts": {
-    "clean": "rm -rf ./node_modules ./dist",
-    "lint": "stylelint 'src/**/*.css'",
-    "lint:fix": "stylelint 'src/**/*.css' --fix",
-    "prebuild": "bun install",
-    "build": "bun run build:tsc && bun run build:worker",
-    "build:tsc": "tsc --noEmit",
-    "build:worker": "wrangler deploy --dry-run --outdir dist",
-    "types": "wrangler types",
-    "predev": "bun install",
-    "dev": "wrangler dev",
-    "prepublishOnly": "cp ../../LICENSE .",
-    "preversion": "bun run lint",
-    "patch": "npm version patch --git-tag-version=false",
-    "minor": "npm version minor --git-tag-version=false",
-    "major": "npm version major --git-tag-version=false",
-    "postversion": "../../scripts/release.sh design $npm_package_version"
-  },
-  "homepage": "https://bkper.com/docs/",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bkper/bkper-web.git",
-    "directory": "packages/design"
-  },
-  "bugs": {
-    "url": "https://github.com/bkper/bkper-web/issues",
-    "email": "support@bkper.com"
-  },
-  "keywords": [
-    "bkper",
-    "design-system",
-    "css",
-    "tokens",
-    "themes"
-  ],
-  "dependencies": {
-    "hono": "^4.9.5"
-  },
-  "devDependencies": {
-    "stylelint": "^16.26.1",
-    "stylelint-config-standard": "^39.0.1",
-    "typescript": "^5.7.2",
-    "wrangler": "^4.38.0"
-  }
+    "name": "@bkper/web-design",
+    "version": "2.1.0",
+    "description": "Bkper design system - CSS variables, tokens, and themes",
+    "author": {
+        "name": "Bkper Inc.",
+        "url": "https://bkper.com"
+    },
+    "license": "Apache-2.0",
+    "main": "src/bkper.css",
+    "style": "src/bkper.css",
+    "exports": {
+        ".": "./src/bkper.css"
+    },
+    "files": [
+        "src",
+        "LICENSE",
+        "README.md"
+    ],
+    "scripts": {
+        "generate-readme": "bun scripts/generate-readme.mjs",
+        "clean": "rm -rf ./node_modules ./dist",
+        "lint": "stylelint 'src/**/*.css'",
+        "lint:fix": "stylelint 'src/**/*.css' --fix",
+        "prebuild": "bun install",
+        "build": "bun run build:tsc && bun run build:worker",
+        "build:tsc": "tsc --noEmit",
+        "build:worker": "wrangler deploy --dry-run --outdir dist",
+        "types": "wrangler types",
+        "predev": "bun install",
+        "dev": "wrangler dev",
+        "prepublishOnly": "cp ../../LICENSE .",
+        "preversion": "bun run lint",
+        "patch": "npm version patch --git-tag-version=false",
+        "minor": "npm version minor --git-tag-version=false",
+        "major": "npm version major --git-tag-version=false",
+        "postversion": "../../scripts/release.sh design $npm_package_version"
+    },
+    "homepage": "https://bkper.com/docs/",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bkper/bkper-web.git",
+        "directory": "packages/design"
+    },
+    "bugs": {
+        "url": "https://github.com/bkper/bkper-web/issues",
+        "email": "support@bkper.com"
+    },
+    "keywords": [
+        "bkper",
+        "design-system",
+        "css",
+        "tokens",
+        "themes"
+    ],
+    "dependencies": {
+        "hono": "^4.9.5"
+    },
+    "devDependencies": {
+        "stylelint": "^16.26.1",
+        "stylelint-config-standard": "^39.0.1",
+        "typescript": "^5.7.2",
+        "wrangler": "^4.38.0"
+    }
 }

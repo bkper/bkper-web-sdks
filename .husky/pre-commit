@@ -1,0 +1,5 @@
+# Regenerate design token tables in README when bkper.css changes
+if git diff --cached --name-only | grep -q 'packages/design/src/bkper.css'; then
+    bun run --cwd packages/design generate-readme
+    git add packages/design/README.md
+fi
