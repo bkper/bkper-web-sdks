@@ -1,13 +1,13 @@
 # @bkper/web-auth
 
-Framework-agnostic OAuth authentication SDK for Bkper API.
+OAuth authentication SDK for apps on the [Bkper Platform](https://bkper.com/docs/build/apps/overview) (`*.bkper.app` subdomains).
 
 [![npm](https://img.shields.io/npm/v/@bkper/web-auth?color=%235889e4)](https://www.npmjs.com/package/@bkper/web-auth)
 
 ## Documentation
 
-- [Developer Docs](https://bkper.com/docs/)
-- [API Reference](https://bkper.com/docs/auth-sdk)
+-   [Developer Docs](https://bkper.com/docs/)
+-   [API Reference](https://bkper.com/docs/auth-sdk)
 
 ## Installation
 
@@ -93,24 +93,26 @@ async function apiRequest(url: string, options: RequestInit = {}) {
 
 ## What's Included
 
-- Framework-agnostic OAuth authentication SDK for Bkper API
-- Callback-based API for authentication events
-- OAuth flow with in-memory token management
-- Token refresh mechanism
-- TypeScript support with full type definitions
+-   OAuth authentication SDK for apps on `*.bkper.app` subdomains
+-   Callback-based API for authentication events
+-   OAuth flow with in-memory token management
+-   Token refresh mechanism
+-   TypeScript support with full type definitions
 
 ## How It Works
 
 **Session Persistence:**
 
-- Access tokens are stored in-memory (cleared on page refresh)
-- Sessions persist via HTTP-only cookies (managed by Bkper's authentication service)
-- Call `init()` on app load to restore the session from cookies
+-   Access tokens are stored in-memory (cleared on page refresh)
+-   Sessions persist via HTTP-only cookies scoped to the `.bkper.app` domain
+-   Call `init()` on app load to restore the session from cookies
+
+> **Note:** This SDK only works for apps hosted on `*.bkper.app` subdomains. For apps on other domains, use a valid access token directly with [bkper-js](https://github.com/bkper/bkper-js#cdn--browser).
 
 **Security:**
 
-- HTTP-only cookies protect refresh tokens from XSS
-- In-memory access tokens minimize exposure
+-   HTTP-only cookies protect refresh tokens from XSS
+-   In-memory access tokens minimize exposure
 
 ## TypeScript Support
 
@@ -129,12 +131,12 @@ const auth = new BkperAuth(config);
 
 ## Browser Compatibility
 
-This package requires modern web browsers with support for:
+This package requires a modern browser with support for:
 
-- [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#browser_compatibility) for HTTP requests
-- [Location API](https://developer.mozilla.org/en-US/docs/Web/API/Location) for login/logout redirects
+-   [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#browser_compatibility) for HTTP requests
+-   [Location API](https://developer.mozilla.org/en-US/docs/Web/API/Location) for login/logout redirects
 
-The package uses standard web APIs and works in any JavaScript environment that supports modern browser features.
+The app must be deployed to a `*.bkper.app` subdomain for session cookies to work.
 
 ## API Reference
 
@@ -150,11 +152,11 @@ new BkperAuth(config?: BkperAuthConfig)
 
 #### Methods
 
-- **`init(): Promise<void>`** - Initialize auth state by attempting to refresh the token. Triggers `onLoginSuccess` if successful, `onLoginRequired` if authentication is needed, or `onError` if refresh fails. Call on app load.
-- **`login(): void`** - Request the start of the login flow.
-- **`refresh(): Promise<void>`** - Refresh the access token. Triggers `onTokenRefresh` if successful or `onError` if refresh fails.
-- **`logout(): void`** - Request the start of the logout flow. Triggers `onLogout` callback.
-- **`getAccessToken(): string | undefined`** - Get the current access token.
+-   **`init(): Promise<void>`** - Initialize auth state by attempting to refresh the token. Triggers `onLoginSuccess` if successful, `onLoginRequired` if authentication is needed, or `onError` if refresh fails. Call on app load.
+-   **`login(): void`** - Request the start of the login flow.
+-   **`refresh(): Promise<void>`** - Refresh the access token. Triggers `onTokenRefresh` if successful or `onError` if refresh fails.
+-   **`logout(): void`** - Request the start of the logout flow. Triggers `onLogout` callback.
+-   **`getAccessToken(): string | undefined`** - Get the current access token.
 
 ### BkperAuthConfig
 
@@ -162,13 +164,13 @@ Configuration options for the auth client.
 
 #### Properties
 
-- **`baseUrl?: string`** - Override the authentication service URL (for testing/development).
-- **`onLoginSuccess?: () => void`** - Called when login succeeds.
-- **`onLoginRequired?: () => void`** - Called when login is required.
-- **`onLogout?: () => void`** - Called when user logs out.
-- **`onTokenRefresh?: (token: string) => void`** - Called when token is refreshed.
-- **`onError?: (error: unknown) => void`** - Called when an auth error occurs.
-- **`getAdditionalAuthParams?: () => Record<string, string>`** - Provide additional parameters for auth requests.
+-   **`baseUrl?: string`** - Override the authentication service URL (for testing/development).
+-   **`onLoginSuccess?: () => void`** - Called when login succeeds.
+-   **`onLoginRequired?: () => void`** - Called when login is required.
+-   **`onLogout?: () => void`** - Called when user logs out.
+-   **`onTokenRefresh?: (token: string) => void`** - Called when token is refreshed.
+-   **`onError?: (error: unknown) => void`** - Called when an auth error occurs.
+-   **`getAdditionalAuthParams?: () => Record<string, string>`** - Provide additional parameters for auth requests.
 
 ## License
 
