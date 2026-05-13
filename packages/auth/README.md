@@ -7,7 +7,7 @@ OAuth authentication SDK for apps on the [Bkper Platform](https://bkper.com/docs
 ## Documentation
 
 -   [Developer Docs](https://bkper.com/docs/)
--   [API Reference](https://bkper.com/docs/auth-sdk)
+-   [API Reference](https://bkper.com/docs/api/bkper-web-auth)
 
 ## Installation
 
