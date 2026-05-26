@@ -64,12 +64,15 @@ export class BkperAuth {
      * ```typescript
      * const token = auth.getAccessToken();
      * if (token) {
-     *   // Make authenticated API calls
+     *   // Make authenticated Bkper API calls or app /api route calls
      *   fetch('/api/data', {
      *     headers: { 'Authorization': `Bearer ${token}` }
      *   });
      * }
      * ```
+     *
+     * Bkper Platform app server routes under `/api/*` require this bearer
+     * header. Dispatch validates it and strips it before invoking app code.
      */
     getAccessToken(): string | undefined {
         return this.accessToken;
@@ -127,18 +130,18 @@ export class BkperAuth {
     /**
      * Refreshes the access token using the current session.
      *
-     * Call this when API requests return 403 to get a new token and retry.
+     * Call this when API requests return 401 or 403 to get a new token and retry.
      * Triggers `onTokenRefresh` callback if successful.
      * Throws error if the refresh fails (network error, expired session, etc.).
      *
      * @example
      * ```typescript
-     * // Handle 403 by refreshing and retrying
+     * // Handle 401/403 by refreshing and retrying
      * const response = await fetch('/api/data', {
      *   headers: { 'Authorization': `Bearer ${auth.getAccessToken()}` }
      * });
      *
-     * if (response.status === 403) {
+     * if (response.status === 401 || response.status === 403) {
      *   await auth.refresh();
      *   // Retry with new token
      *   return fetch('/api/data', {

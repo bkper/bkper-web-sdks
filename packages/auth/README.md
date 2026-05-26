@@ -47,7 +47,7 @@ const auth = new BkperAuth({
 // Initialize authentication flow on app load
 await auth.init();
 
-// Get access token for API calls
+// Get access token for Bkper API calls or app /api routes
 const token = auth.getAccessToken();
 if (token) {
     fetch('/api/data', {
@@ -55,6 +55,8 @@ if (token) {
     });
 }
 ```
+
+For Bkper Platform apps, this bearer header is required on app server routes under `/api/*`. Dispatch validates the token before the Worker runs and strips the header before invoking app code.
 
 ## Handling Token Expiration
 
@@ -71,8 +73,8 @@ async function apiRequest(url: string, options: RequestInit = {}) {
 
     const response = await fetch(url, options);
 
-    // Handle expired token
-    if (response.status === 403) {
+    // Handle expired or invalid token
+    if (response.status === 401 || response.status === 403) {
         try {
             await auth.refresh();
             options.headers = {
@@ -105,7 +107,8 @@ async function apiRequest(url: string, options: RequestInit = {}) {
 
 -   Access tokens are stored in-memory (cleared on page refresh)
 -   Sessions persist via HTTP-only cookies scoped to the `.bkper.app` domain
--   Call `init()` on app load to restore the session from cookies
+-   Call `init()` on app load to restore an access token from the session
+-   App server routes under `/api/*` still require `Authorization: Bearer <token>`; session cookies only restore client auth state
 
 > **Note:** This SDK only works for apps hosted on `*.bkper.app` subdomains. For apps on other domains, use a valid access token directly with [bkper-js](https://github.com/bkper/bkper-js#cdn--browser).
 
@@ -136,7 +139,7 @@ This package requires a modern browser with support for:
 -   [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API#browser_compatibility) for HTTP requests
 -   [Location API](https://developer.mozilla.org/en-US/docs/Web/API/Location) for login/logout redirects
 
-The app must be deployed to a `*.bkper.app` subdomain for session cookies to work.
+The app must be deployed to a `*.bkper.app` subdomain for session-cookie token restoration to work.
 
 ## API Reference
 
