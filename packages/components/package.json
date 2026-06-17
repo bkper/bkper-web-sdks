@@ -1,0 +1,81 @@
+{
+    "name": "@bkper/web-components",
+    "version": "0.1.0",
+    "description": "Framework-agnostic web components and browser helpers for Bkper apps",
+    "author": {
+        "name": "Bkper Inc.",
+        "url": "https://bkper.com"
+    },
+    "license": "Apache-2.0",
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "sideEffects": [
+        "./dist/theme/init.js",
+        "./dist/theme-toggle.js",
+        "./dist/theme-init.global.js"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        },
+        "./theme": {
+            "types": "./dist/theme/index.d.ts",
+            "import": "./dist/theme/index.js",
+            "default": "./dist/theme/index.js"
+        },
+        "./theme/init": {
+            "types": "./dist/theme/init.d.ts",
+            "import": "./dist/theme/init.js",
+            "default": "./dist/theme/init.js"
+        },
+        "./theme-toggle": {
+            "types": "./dist/theme-toggle.d.ts",
+            "import": "./dist/theme-toggle.js",
+            "default": "./dist/theme-toggle.js"
+        },
+        "./theme-init.global.js": "./dist/theme-init.global.js"
+    },
+    "files": [
+        "dist",
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
+    ],
+    "scripts": {
+        "clean": "rm -rf ./node_modules ./dist",
+        "build": "rm -rf ./dist && tsc",
+        "dev": "tsc -w",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "prepublishOnly": "cp ../../LICENSE . && bun run build && bun run test",
+        "preversion": "bun run test",
+        "patch": "npm version patch --git-tag-version=false",
+        "minor": "npm version minor --git-tag-version=false",
+        "major": "npm version major --git-tag-version=false",
+        "postversion": "../../scripts/release.sh components $npm_package_version"
+    },
+    "homepage": "https://bkper.com/docs/",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bkper/bkper-web.git",
+        "directory": "packages/components"
+    },
+    "bugs": {
+        "url": "https://github.com/bkper/bkper-web/issues",
+        "email": "support@bkper.com"
+    },
+    "keywords": [
+        "bkper",
+        "web-components",
+        "theme"
+    ],
+    "devDependencies": {
+        "typescript": "^5.7.2",
+        "vitest": "^4.0.16",
+        "@vitest/ui": "^4.0.16"
+    }
+}

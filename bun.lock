@@ -17,6 +17,15 @@
         "vitest": "^4.0.16",
       },
     },
+    "packages/components": {
+      "name": "@bkper/web-components",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@vitest/ui": "^4.0.16",
+        "typescript": "^5.7.2",
+        "vitest": "^4.0.16",
+      },
+    },
     "packages/design": {
       "name": "@bkper/web-design",
       "version": "2.1.0",
@@ -45,6 +54,8 @@
     "@babel/helper-validator-identifier": ["@babel/helper-validator-identifier@7.28.5", "", {}, "sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q=="],
 
     "@bkper/web-auth": ["@bkper/web-auth@workspace:packages/auth"],
+
+    "@bkper/web-components": ["@bkper/web-components@workspace:packages/components"],
 
     "@bkper/web-design": ["@bkper/web-design@workspace:packages/design"],
 
