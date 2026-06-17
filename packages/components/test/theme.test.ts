@@ -1,21 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-    applyTheme,
+    createThemeChangeMessage,
     DEFAULT_THEME,
-    getTheme,
     isThemePreference,
+    readThemeChangeMessage,
+    THEME_CHANGE_MESSAGE_TYPE,
+} from '../src/theme/index.js';
+import {
+    applyTheme,
+    getTheme,
+    isDarkTheme,
     LEGACY_THEME_STORAGE_KEY,
     resolveTheme,
     setTheme,
-    subscribeThemeChanges,
-    THEME_CHANGE_MESSAGE_TYPE,
     THEME_COOKIE_NAME,
     type ResolvedTheme,
     type ThemeDocument,
     type ThemePreference,
     type ThemeStorage,
-    type ThemeWindow,
-} from '../src/theme/index.js';
+} from '../src/theme/runtime.js';
 
 class MemoryStorage implements ThemeStorage {
     private values = new Map<string, string>();
@@ -56,22 +59,6 @@ class CookieDocument implements ThemeDocument {
         this.value = Array.from(cookies.entries())
             .map(([cookieName, storedValue]) => `${cookieName}=${storedValue}`)
             .join('; ');
-    }
-}
-
-class ThemeMessageWindow extends EventTarget implements ThemeWindow {
-    public opener: MessageEventSource | null = null;
-
-    constructor(public parent: MessageEventSource | null) {
-        super();
-    }
-
-    addEventListener(type: 'message', listener: (event: MessageEvent) => void): void {
-        super.addEventListener(type, listener as EventListener);
-    }
-
-    removeEventListener(type: 'message', listener: (event: MessageEvent) => void): void {
-        super.removeEventListener(type, listener as EventListener);
     }
 }
 
@@ -189,6 +176,12 @@ describe('theme helpers', () => {
         expect(resolveTheme('system', createRuntime({ systemDark: false }).runtime)).toBe('light');
     });
 
+    it('reports whether the resolved theme is dark', () => {
+        expect(isDarkTheme('dark', createRuntime().runtime)).toBe(true);
+        expect(isDarkTheme('light', createRuntime().runtime)).toBe(false);
+        expect(isDarkTheme('system', createRuntime({ systemDark: true }).runtime)).toBe(true);
+    });
+
     it('applies wa-dark and color-scheme to the document element', () => {
         const { runtime } = createRuntime();
 
@@ -204,33 +197,17 @@ describe('theme helpers', () => {
         expect(document.documentElement.style.colorScheme).toBe('light');
     });
 
-    it('applies parent theme change messages and persists only changed preferences', () => {
-        const parentPort = new MessageChannel().port1;
-        const appWindow = new ThemeMessageWindow(parentPort);
-        const { doc, runtime } = createRuntime({ cookie: `${THEME_COOKIE_NAME}=dark` });
-        const listener = vi.fn();
-        const unsubscribe = subscribeThemeChanges(listener, { ...runtime, window: appWindow });
+    it('creates and reads theme change messages', () => {
+        const message = createThemeChangeMessage('light');
 
-        appWindow.dispatchEvent(
-            new MessageEvent('message', {
-                data: { type: THEME_CHANGE_MESSAGE_TYPE, theme: 'light' satisfies ThemePreference },
-                source: parentPort,
-            })
+        expect(message).toEqual({
+            type: THEME_CHANGE_MESSAGE_TYPE,
+            theme: 'light' satisfies ThemePreference,
+        });
+        expect(readThemeChangeMessage(message)).toBe('light');
+        expect(readThemeChangeMessage({ type: THEME_CHANGE_MESSAGE_TYPE, theme: 'auto' })).toBe(
+            undefined
         );
-
-        expect(listener).toHaveBeenCalledWith({ theme: 'light', resolvedTheme: 'light' });
-        expect(doc.writes).toHaveLength(1);
-        expect(doc.writes[0]).toContain(`${THEME_COOKIE_NAME}=light`);
-
-        appWindow.dispatchEvent(
-            new MessageEvent('message', {
-                data: { type: THEME_CHANGE_MESSAGE_TYPE, theme: 'light' satisfies ThemePreference },
-                source: parentPort,
-            })
-        );
-
-        expect(doc.writes).toHaveLength(1);
-        unsubscribe();
-        parentPort.close();
+        expect(readThemeChangeMessage({ type: 'other', theme: 'light' })).toBe(undefined);
     });
 });

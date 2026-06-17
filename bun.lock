@@ -19,7 +19,7 @@
     },
     "packages/components": {
       "name": "@bkper/web-components",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@vitest/ui": "^4.0.16",
         "typescript": "^5.7.2",

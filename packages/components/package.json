@@ -1,6 +1,6 @@
 {
     "name": "@bkper/web-components",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Framework-agnostic web components and browser helpers for Bkper apps",
     "author": {
         "name": "Bkper Inc.",
@@ -12,8 +12,6 @@
     "module": "dist/index.js",
     "types": "dist/index.d.ts",
     "sideEffects": [
-        "./dist/theme/init.js",
-        "./dist/theme-toggle.js",
         "./dist/theme-init.global.js"
     ],
     "exports": {
@@ -26,16 +24,6 @@
             "types": "./dist/theme/index.d.ts",
             "import": "./dist/theme/index.js",
             "default": "./dist/theme/index.js"
-        },
-        "./theme/init": {
-            "types": "./dist/theme/init.d.ts",
-            "import": "./dist/theme/init.js",
-            "default": "./dist/theme/init.js"
-        },
-        "./theme-toggle": {
-            "types": "./dist/theme-toggle.d.ts",
-            "import": "./dist/theme-toggle.js",
-            "default": "./dist/theme-toggle.js"
         },
         "./theme-init.global.js": "./dist/theme-init.global.js"
     },

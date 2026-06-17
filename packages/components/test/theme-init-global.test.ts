@@ -1,10 +1,7 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-function runThemeInitGlobal(): void {
-    const script = readFileSync(join(process.cwd(), 'src/theme-init.global.js'), 'utf8');
-    window.eval(script);
+async function runThemeInitGlobal(): Promise<void> {
+    await import('../src/theme-init.global.ts?theme-init-global-test');
 }
 
 describe('theme-init.global', () => {
@@ -15,10 +12,10 @@ describe('theme-init.global', () => {
         document.documentElement.style.colorScheme = '';
     });
 
-    it('runs as a blocking classic script and migrates legacy storage before first paint', () => {
+    it('runs before app modules and migrates legacy storage before first paint', async () => {
         localStorage.setItem('theme', 'light');
 
-        runThemeInitGlobal();
+        await runThemeInitGlobal();
 
         expect(document.cookie).toContain('bkper_theme=light');
         expect(localStorage.getItem('theme')).toBeNull();
