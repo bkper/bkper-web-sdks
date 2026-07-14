@@ -40,11 +40,11 @@
   "homepage": "https://bkper.com/docs/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bkper/bkper-web.git",
+    "url": "https://github.com/bkper/bkper-web-sdks",
     "directory": "packages/auth"
   },
   "bugs": {
-    "url": "https://github.com/bkper/bkper-web/issues",
+    "url": "https://github.com/bkper/bkper-web-sdks/issues",
     "email": "support@bkper.com"
   },
   "keywords": [
