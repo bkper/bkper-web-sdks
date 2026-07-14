@@ -47,58 +47,63 @@ const auth = new BkperAuth({
 // Initialize authentication flow on app load
 await auth.init();
 
-// Get access token for Bkper API calls or app /api routes
-const token = auth.getAccessToken();
-if (token) {
-    fetch('/api/data', {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-}
+// Make an authenticated request with automatic token refresh and one retry
+const response = await auth.authenticatedFetch('/data');
 ```
 
-For Bkper Platform apps, this bearer header is required on app server routes under `/api/*`. Dispatch validates the token before the Worker runs and strips the header before invoking app code.
+## Authenticated Requests
 
-## Handling Token Expiration
-
-Access tokens expire and need to be refreshed. The recommended pattern is to handle authentication errors and retry:
+`authenticatedFetch()` implements the standard Fetch API contract. It adds the current bearer token to a request. If the response is `401`, it refreshes the token and retries exactly once. Other response statuses are returned unchanged.
 
 ```typescript
-async function apiRequest(url: string, options: RequestInit = {}) {
-    // Add auth header
-    const token = auth.getAccessToken();
-    options.headers = {
-        ...options.headers,
-        Authorization: `Bearer ${token}`,
-    };
-
-    const response = await fetch(url, options);
-
-    // Handle expired or invalid token
-    if (response.status === 401 || response.status === 403) {
-        try {
-            await auth.refresh();
-            options.headers = {
-                ...options.headers,
-                Authorization: `Bearer ${auth.getAccessToken()}`,
-            };
-            return fetch(url, options); // Retry once
-        } catch (error) {
-            // Refresh failed - the onError callback will be triggered
-            // Handle the error appropriately (e.g., redirect to login, show error message)
-            throw error;
-        }
-    }
-
-    return response;
-}
+const response = await auth.authenticatedFetch('/data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ value: 42 }),
+});
 ```
+
+The method can also be supplied to any HTTP client that accepts a Fetch-compatible function:
+
+```typescript
+const fetchWithAuth = auth.authenticatedFetch.bind(auth);
+```
+
+Call `init()` before the first authenticated request. If no token is available, or the session cannot be refreshed, `onLoginRequired` is called and the request rejects with an authentication-required error. If the retried request also returns `401`, that response is returned without another retry. Concurrent refresh calls share one refresh request.
+
+To prevent accidental token disclosure, authenticated requests are restricted to:
+
+- HTTPS origins on `bkper.app` or its subdomains
+- The current `localhost` or `127.0.0.1` origin during local development
+
+Request paths are not restricted.
+
+### Using with bkper-js
+
+`@bkper/web-auth` does not depend on `bkper-js`, but they can be connected through the client configuration. Provide the current token for each request and refresh it when the Bkper API reports an expired login:
+
+```typescript
+import { Bkper } from 'bkper-js';
+
+const bkper = new Bkper({
+    oauthTokenProvider: async () => auth.getAccessToken(),
+    requestRetryHandler: async (status, _error, attempt) => {
+        if (status === 403 && attempt === 1) {
+            await auth.refresh();
+        }
+    },
+});
+```
+
+`bkper-js` owns its request and retry lifecycle. `@bkper/web-auth` remains responsible only for the current access token and session refresh.
 
 ## What's Included
 
 -   OAuth authentication SDK for apps on `*.bkper.app` subdomains
 -   Callback-based API for authentication events
 -   OAuth flow with in-memory token management
--   Token refresh mechanism
+-   Single-flight token refresh mechanism
+-   Authenticated Fetch API with one-time refresh and retry
 -   TypeScript support with full type definitions
 
 ## How It Works
@@ -108,9 +113,9 @@ async function apiRequest(url: string, options: RequestInit = {}) {
 -   Access tokens are stored in-memory (cleared on page refresh)
 -   Sessions persist via HTTP-only cookies scoped to the `.bkper.app` domain
 -   Call `init()` on app load to restore an access token from the session
--   App server routes under `/api/*` still require `Authorization: Bearer <token>`; session cookies only restore client auth state
+-   Protected resources still require `Authorization: Bearer <token>`; session cookies only restore client auth state
 
-> **Note:** This SDK only works for apps hosted on `*.bkper.app` subdomains. For apps on other domains, use a valid access token directly with [bkper-js](https://github.com/bkper/bkper-js#cdn--browser).
+> **Note:** This SDK only works for apps hosted on `*.bkper.app` subdomains. Applications on other domains must provide a valid access token through their own authentication mechanism.
 
 **Security:**
 
@@ -157,7 +162,8 @@ new BkperAuth(config?: BkperAuthConfig)
 
 -   **`init(): Promise<void>`** - Initialize auth state by attempting to refresh the token. Triggers `onLoginSuccess` if successful, `onLoginRequired` if authentication is needed, or `onError` if refresh fails. Call on app load.
 -   **`login(): void`** - Request the start of the login flow.
--   **`refresh(): Promise<void>`** - Refresh the access token. Triggers `onTokenRefresh` if successful or `onError` if refresh fails.
+-   **`refresh(): Promise<void>`** - Refresh the access token. Concurrent calls share one refresh request. Triggers `onTokenRefresh` if successful or `onError` if refresh fails.
+-   **`authenticatedFetch(input, init?): Promise<Response>`** - Send an authenticated Fetch API request, refreshing and retrying once after `401`.
 -   **`logout(): void`** - Request the start of the logout flow. Triggers `onLogout` callback.
 -   **`getAccessToken(): string | undefined`** - Get the current access token.
 

@@ -26,6 +26,7 @@ export class BkperAuth {
     private baseUrl: string;
 
     private accessToken: string | undefined;
+    private refreshPromise: Promise<void> | undefined;
 
     // Authentication service endpoints
     private readonly AUTH_LOGIN_PATH = '/auth/login';
@@ -60,22 +61,40 @@ export class BkperAuth {
      *
      * @returns The access token if authenticated, undefined otherwise
      *
+     * Use `authenticatedFetch()` for Fetch API requests. This getter is
+     * available for HTTP clients that accept an access-token provider.
+     *
      * @example
      * ```typescript
-     * const token = auth.getAccessToken();
-     * if (token) {
-     *   // Make authenticated Bkper API calls or app /api route calls
-     *   fetch('/api/data', {
-     *     headers: { 'Authorization': `Bearer ${token}` }
-     *   });
-     * }
+     * const tokenProvider = async () => auth.getAccessToken();
      * ```
-     *
-     * Bkper Platform app server routes under `/api/*` require this bearer
-     * header. Dispatch validates it and strips it before invoking app code.
      */
     getAccessToken(): string | undefined {
         return this.accessToken;
+    }
+
+    /**
+     * Performs an authenticated request and retries it once after refreshing an
+     * expired or invalid access token.
+     *
+     * Concurrent refresh calls share the same refresh request. A second 401
+     * response is returned without another retry.
+     *
+     * Call `init()` before the first request. Bearer tokens are sent only to
+     * HTTPS Bkper origins or the current local development origin. Request
+     * paths are not restricted.
+     */
+    async authenticatedFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+        const request = new Request(input, init);
+        this.requireAllowedRequestOrigin(request);
+
+        const response = await this.fetchWithAccessToken(request);
+        if (response.status !== 401) {
+            return response;
+        }
+
+        await this.refresh();
+        return this.fetchWithAccessToken(request);
     }
 
     /**
@@ -89,10 +108,8 @@ export class BkperAuth {
         try {
             await this.refresh();
             this.checkAccessToken();
-        } catch (error: unknown) {
-            if (this.config.onError) {
-                this.config.onError(error);
-            }
+        } catch {
+            // refresh() already clears auth state and reports the error.
         }
     }
 
@@ -130,63 +147,99 @@ export class BkperAuth {
     /**
      * Refreshes the access token using the current session.
      *
-     * Call this when API requests return 401 or 403 to get a new token and retry.
-     * Triggers `onTokenRefresh` callback if successful.
-     * Throws error if the refresh fails (network error, expired session, etc.).
+     * Concurrent calls share one refresh request. Triggers `onTokenRefresh`
+     * if successful and throws if the refresh request fails.
+     *
+     * `authenticatedFetch()` calls this method automatically after a 401.
+     * Consumers can also call it explicitly when they need a new token.
      *
      * @example
      * ```typescript
-     * // Handle 401/403 by refreshing and retrying
-     * const response = await fetch('/api/data', {
-     *   headers: { 'Authorization': `Bearer ${auth.getAccessToken()}` }
-     * });
-     *
-     * if (response.status === 401 || response.status === 403) {
-     *   await auth.refresh();
-     *   // Retry with new token
-     *   return fetch('/api/data', {
-     *     headers: { 'Authorization': `Bearer ${auth.getAccessToken()}` }
-     *   });
-     * }
+     * await auth.refresh();
+     * const token = auth.getAccessToken();
      * ```
      */
     async refresh(): Promise<void> {
-
-        const url = this.getRefreshUrl();
-
-        const options: RequestInit = {
-            method: 'POST',
-            credentials: 'include', // Send cookies
-        };
-
-        return fetch(url, options)
-            .then(response => {
-                if (response.status === 200) {
-                    return response.json().then(data => {
-                        // Validate response shape
-                        if (!data || typeof data.accessToken !== 'string' || !data.accessToken) {
-                            return Promise.reject(new Error('Invalid auth response: missing or invalid accessToken'));
-                        }
-                        this.accessToken = data.accessToken;
-                        if (this.config.onTokenRefresh && this.accessToken) {
-                            this.config.onTokenRefresh(this.accessToken);
-                        }
-                        return;
-                    });
-                } else if (response.status === 401) {
-                    this.accessToken = undefined;
-                    return;
-                } else {
-                    return Promise.reject(new Error(response.statusText));
-                }
-            })
-            .catch((error) => {
-                this.accessToken = undefined;
-                if (this.config.onError) {
-                    this.config.onError(error);
-                }
-                return Promise.reject(error);
+        if (!this.refreshPromise) {
+            this.refreshPromise = this.performRefresh().finally(() => {
+                this.refreshPromise = undefined;
             });
+        }
+        return this.refreshPromise;
+    }
+
+    private async performRefresh(): Promise<void> {
+        try {
+            const url = this.getRefreshUrl();
+            const options: RequestInit = {
+                method: 'POST',
+                credentials: 'include',
+            };
+            const response = await fetch(url, options);
+            if (response.status === 200) {
+                const data: unknown = await response.json();
+                if (!this.hasAccessToken(data)) {
+                    throw new Error('Invalid auth response: missing or invalid accessToken');
+                }
+                this.accessToken = data.accessToken;
+                this.config.onTokenRefresh?.(data.accessToken);
+                return;
+            }
+            if (response.status === 401) {
+                this.accessToken = undefined;
+                return;
+            }
+            throw new Error(response.statusText);
+        } catch (error: unknown) {
+            this.accessToken = undefined;
+            this.config.onError?.(error);
+            throw error;
+        }
+    }
+
+    private async fetchWithAccessToken(request: Request): Promise<Response> {
+        const headers = new Headers(request.headers);
+        headers.set('Authorization', `Bearer ${this.requireAccessToken()}`);
+        return fetch(new Request(request.clone(), { headers }));
+    }
+
+    private requireAccessToken(): string {
+        const token = this.accessToken?.trim();
+        if (token) {
+            return token;
+        }
+        this.config.onLoginRequired?.();
+        throw new Error('Authentication required.');
+    }
+
+    private requireAllowedRequestOrigin(request: Request): void {
+        const requestUrl = new URL(request.url);
+        const currentUrl = new URL(self.location.href);
+        const isAllowed = this.isLocalHostname(currentUrl.hostname)
+            ? requestUrl.origin === currentUrl.origin
+            : requestUrl.protocol === 'https:' && this.isBkperHostname(requestUrl.hostname);
+
+        if (!isAllowed) {
+            throw new Error(
+                'Authenticated requests are restricted to HTTPS Bkper origins or the current local development origin.'
+            );
+        }
+    }
+
+    private isBkperHostname(hostname: string): boolean {
+        return hostname === 'bkper.app' || hostname.endsWith('.bkper.app');
+    }
+
+    private isLocalHostname(hostname: string): boolean {
+        return hostname === 'localhost' || hostname === '127.0.0.1';
+    }
+
+    private hasAccessToken(value: unknown): value is { accessToken: string } {
+        if (typeof value !== 'object' || value === null) {
+            return false;
+        }
+        const accessToken = Reflect.get(value, 'accessToken');
+        return typeof accessToken === 'string' && accessToken.length > 0;
     }
 
     /**

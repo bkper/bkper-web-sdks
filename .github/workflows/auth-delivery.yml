@@ -1,0 +1,49 @@
+name: auth-delivery
+
+on:
+    push:
+        tags: ['auth-v*.*.*']
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            id-token: write
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 22
+                  registry-url: 'https://registry.npmjs.org'
+
+            - name: Validate tag
+              env:
+                  RELEASE_TAG: ${{ github.ref_name }}
+              run: |
+                  PACKAGE_VERSION="$(node -p 'require("./packages/auth/package.json").version')"
+                  test "$RELEASE_TAG" = "auth-v${PACKAGE_VERSION}"
+
+            - name: Install
+              run: bun install --frozen-lockfile
+
+            - name: Build and test
+              run: |
+                  bun --cwd packages/auth run build
+                  bun --cwd packages/auth run test
+
+            - name: Setup trusted publishing
+              run: npm install -g npm@11.11.0
+
+            - name: Publish
+              working-directory: packages/auth
+              run: npm publish --access public --provenance
