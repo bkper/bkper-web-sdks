@@ -51,7 +51,7 @@ This package works standalone with sensible default values. If [Web Awesome](htt
 | `--bkper-font-family` | `ui-sans-serif, system-ui, sans-serif` | `--wa-font-family-body` |
 | `--bkper-font-family-code` | `ui-monospace, monospace` | `--wa-font-family-code` |
 | `--bkper-font-size-x-small` | `0.75rem` | `--wa-font-size-xs` |
-| `--bkper-font-size-small` | `0.85rem` | — |
+| `--bkper-font-size-small` | `0.85rem` | `--wa-font-size-scale` |
 | `--bkper-font-size-medium` | `1rem` | `--wa-font-size-m` |
 | `--bkper-font-size-large` | `1.25rem` | `--wa-font-size-l` |
 | `--bkper-font-weight-bold` | `600` | `--wa-font-weight-bold` |

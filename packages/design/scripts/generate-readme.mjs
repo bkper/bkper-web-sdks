@@ -67,7 +67,14 @@ function parseDeclaration(line, deprecated) {
     let waFallback;
     let defaultValue = rawValue;
 
-    if (waMatch) {
+    if (waMatch && !rawValue.startsWith('var(')) {
+        // A Web Awesome token inside an expression, e.g. calc(0.85rem * var(--wa-font-size-scale, 1)):
+        // the default is the expression with each fallback, reduced when it multiplies by 1.
+        waFallback = waMatch[1];
+        defaultValue = rawValue
+            .replace(/var\(\s*--wa-[\w-]+\s*,\s*([^()]+?)\s*\)/g, '$1')
+            .replace(/^calc\((.+?) \* 1\)$/, '$1');
+    } else if (waMatch) {
         waFallback = waMatch[1];
         defaultValue = waMatch[2].trim();
     } else if (bkperRef) {

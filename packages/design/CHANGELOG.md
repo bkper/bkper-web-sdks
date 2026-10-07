@@ -4,6 +4,9 @@ This is the first publication of the Bkper design system as an npm package. The 
 
 **Version History**: Version 2.x introduced a token-based design system with Web Awesome integration and Bkper-specific account type colors. Version 1.x was a simple CSS file without a token system.
 
+## 2.2.0
+- `--bkper-font-size-small` follows Web Awesome's `--wa-font-size-scale`, like the other font size tokens. Unchanged at the default scale or without Web Awesome
+
 ## 2.1.0
 - Add large spacing tokens: `--bkper-spacing-2x-large`, `--bkper-spacing-3x-large`, `--bkper-spacing-4x-large`
 - Add `--bkper-color-focus` token
