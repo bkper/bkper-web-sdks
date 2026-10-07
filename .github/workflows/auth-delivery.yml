@@ -38,8 +38,8 @@ jobs:
 
             - name: Build and test
               run: |
-                  bun --cwd packages/auth run build
-                  bun --cwd packages/auth run test
+                  bun run --cwd packages/auth build
+                  bun run --cwd packages/auth test
 
             - name: Setup trusted publishing
               run: npm install -g npm@11.11.0
