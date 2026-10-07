@@ -1,0 +1,105 @@
+name: design-delivery
+
+on:
+    push:
+        tags: ['design-v*.*.*']
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        concurrency:
+            group: release-${{ github.ref_name }}
+            cancel-in-progress: false
+        permissions:
+            contents: read
+            id-token: write
+
+        steps:
+            - name: Checkout tagged commit
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 22
+                  registry-url: 'https://registry.npmjs.org'
+
+            - name: Validate tag matches package version
+              env:
+                  RELEASE_TAG: ${{ github.ref_name }}
+              run: |
+                  PACKAGE_VERSION="$(node -p 'require("./packages/design/package.json").version')"
+                  test "$RELEASE_TAG" = "design-v${PACKAGE_VERSION}"
+
+            - name: Ensure tagged commit is on main
+              env:
+                  TAG_COMMIT_SHA: ${{ github.sha }}
+              run: |
+                  git fetch origin main --force
+                  git merge-base --is-ancestor "$TAG_COMMIT_SHA" origin/main
+
+            - name: Install
+              run: bun install --frozen-lockfile
+
+            - name: Lint and build
+              run: |
+                  bun run --cwd packages/design lint
+                  bun run --cwd packages/design build
+
+            - name: Setup trusted publishing
+              run: npm install -g npm@11.11.0
+
+            - name: Publish
+              working-directory: packages/design
+              run: npm publish --access public --provenance
+
+            - name: Notify
+              if: always()
+              uses: pioug/le-slack-message@v1.0.0
+              with:
+                  ACTION_NAME: publish ${{ github.ref_name }}
+                  JOB: ${{ toJson(job) }}
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    # The CDN (bkper.app/design/v2/style.css) serves the latest npm release.
+    deploy-cdn:
+        needs: publish
+        runs-on: ubuntu-22.04
+        permissions:
+            contents: read
+
+        steps:
+            - uses: actions/checkout@v6
+
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+
+            - name: Install
+              run: bun install --cwd packages/design
+
+            - name: Build
+              run: bun run --cwd packages/design build
+
+            - name: Deploy
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  wranglerVersion: '4.38.0'
+                  workingDirectory: 'packages/design'
+
+            - name: Notify
+              if: always()
+              uses: pioug/le-slack-message@v1.0.0
+              with:
+                  ACTION_NAME: deploy-cdn ${{ github.ref_name }}
+                  JOB: ${{ toJson(job) }}
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
